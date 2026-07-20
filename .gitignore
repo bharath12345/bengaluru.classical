@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.python-version
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/media/
+local_settings.py
+
+# Secrets / env
+.env
+.env.*
+*.pem
+*-key.json
+service-account*.json
+
+# Node / Tailwind build
+node_modules/
+/app/static/dist/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
