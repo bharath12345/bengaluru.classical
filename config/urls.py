@@ -35,6 +35,11 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
     ),
+    path(
+        ".well-known/mcp.json",
+        serve,
+        {"path": ".well-known/mcp.json", "document_root": str(BASE_DIR / "app" / "static")},
+    ),
     path("ingest/", include("apps.ingest.urls")),
     path("", include("apps.web.urls")),
 ]

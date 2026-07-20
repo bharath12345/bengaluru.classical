@@ -16,6 +16,8 @@ dependencies = [
     "beautifulsoup4>=4.12",
     "lxml>=5.3",
     "google-genai>=0.8",
+    "fastmcp>=2.0",
+    "starlette>=0.37",
 ]
 
 [dependency-groups]

@@ -1,0 +1,7 @@
+{
+  "name": "bengaluru-classical",
+  "description": "Hardcore Karnatic and Hindustani classical concerts in Bengaluru",
+  "url": "https://bengaluruclassical.in/mcp",
+  "transport": "streamable-http",
+  "tools": ["search_events", "get_event", "list_venues", "list_artists"]
+}

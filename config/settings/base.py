@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "apps.ingest",
     "apps.web",
     "apps.pipeline",
+    "apps.mcp",
 ]
 
 MIDDLEWARE = [

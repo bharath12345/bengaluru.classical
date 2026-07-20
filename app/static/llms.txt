@@ -2,9 +2,10 @@
 
 This site aggregates hardcore Karnatic and Hindustani classical concerts in Bengaluru.
 
-## Read-only MCP server (future)
+## Read-only MCP server
 Endpoint: /mcp (stateless streamable HTTP)
 Tools: search_events, get_event, list_venues, list_artists
+Discovery: /.well-known/mcp.json
 
 ## Key URLs
 - Upcoming events: /
