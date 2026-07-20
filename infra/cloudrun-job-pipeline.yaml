@@ -1,0 +1,21 @@
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: bengaluru-classical-pipeline
+spec:
+  template:
+    spec:
+      template:
+        spec:
+          containers:
+            - image: asia-south1-docker.pkg.dev/bengaluru-classical/bengaluru-classical/web:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  python manage.py run_scrapers && python manage.py process_raw_ingests
+              env:
+                - name: DJANGO_SETTINGS_MODULE
+                  value: config.settings.prod
+          timeoutSeconds: 3600
+          maxRetries: 1

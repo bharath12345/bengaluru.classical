@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bengaluru Classical{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Hardcore Karnatic and Hindustani classical concerts in Bengaluru — upcoming events, calendar, and archive.{% endblock %}">
+    {% block meta_tags %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'dist/main.css' %}">
+    <script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+    <nav class="bg-white shadow">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="{% url 'web:event_list' %}" class="text-xl font-bold text-gray-900">
+                Bengaluru Classical
+            </a>
+            <div class="flex gap-6">
+                <a href="{% url 'web:calendar' %}" class="text-gray-700 hover:text-gray-900">Calendar</a>
+                <a href="{% url 'web:archive' %}" class="text-gray-700 hover:text-gray-900">Archive</a>
+                <a href="{% url 'web:submit' %}" class="text-gray-700 hover:text-gray-900">Submit</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-100 mt-16 py-8">
+        <div class="container mx-auto px-4 text-center text-sm text-gray-600">
+            <p>Aggregating hardcore Karnatic and Hindustani classical concerts in Bengaluru.</p>
+            <p class="mt-2">Open source • <a href="/calendar.ics" class="underline">Subscribe to calendar</a></p>
+        </div>
+    </footer>
+</body>
+</html>

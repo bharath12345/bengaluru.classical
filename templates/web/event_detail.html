@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} — Bengaluru Classical{% endblock %}
+
+{% block meta_description %}{{ event.title }} — {{ event.get_genre_display }} concert on {{ event.start_at|date:"D, d M Y" }} at {{ event.venue.name }}.{% endblock %}
+
+{% block meta_tags %}
+<meta property="og:title" content="{{ event.title }}">
+<meta property="og:description" content="{{ event.description|default:event.title }}">
+<meta property="og:type" content="event">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% if event.poster %}
+<meta property="og:image" content="{{ request.build_absolute_uri }}{{ event.poster.url }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{ request.build_absolute_uri }}{{ event.poster.url }}">
+{% else %}
+<meta name="twitter:card" content="summary">
+{% endif %}
+<meta name="twitter:title" content="{{ event.title }}">
+<meta name="twitter:description" content="{{ event.description|default:event.title }}">
+{% endblock %}
+
+{% block extra_head %}
+<script type="application/ld+json">
+{{ jsonld|safe }}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <nav class="text-sm text-gray-600 mb-4">
+        <a href="{% url 'web:event_list' %}" class="hover:underline">← Back to upcoming events</a>
+    </nav>
+
+    <article class="bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-4xl font-bold mb-4">{{ event.title }}</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div class="md:col-span-2 space-y-4">
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase">When</h2>
+                    <p class="text-lg">{{ event.start_at|date:"l, d F Y" }}</p>
+                    <p class="text-lg">{{ event.start_at|date:"g:i A" }}{% if event.end_at %} – {{ event.end_at|date:"g:i A" }}{% endif %}</p>
+                </div>
+
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase">Where</h2>
+                    <p class="text-lg">{{ event.venue.name }}</p>
+                    {% if event.venue.area %}<p class="text-gray-600">{{ event.venue.area }}</p>{% endif %}
+                    {% if event.venue.address %}<p class="text-gray-600 text-sm">{{ event.venue.address }}</p>{% endif %}
+                    {% if event.venue.map_url %}
+                    <a href="{{ event.venue.map_url }}" target="_blank" class="text-blue-600 hover:underline text-sm">View on map →</a>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase">Genre</h2>
+                    <p class="text-lg capitalize">{{ event.get_genre_display }}</p>
+                </div>
+
+                {% if event.event_artists.exists %}
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase">Artists</h2>
+                    <ul class="space-y-1">
+                        {% for ea in event.event_artists.all %}
+                        <li class="text-lg">{{ ea.artist.name }} <span class="text-gray-600 text-sm">({{ ea.role }})</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase">Entry</h2>
+                    {% if event.is_free %}
+                    <p class="text-lg text-green-700 font-semibold">Free</p>
+                    {% else %}
+                    <p class="text-lg">{{ event.currency }} {{ event.price }}</p>
+                    {% endif %}
+                    {% if event.source_url %}
+                    <a href="{{ event.source_url }}" target="_blank" class="text-blue-600 hover:underline text-sm">Tickets / More info →</a>
+                    {% endif %}
+                </div>
+
+                {% if event.description %}
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase">About</h2>
+                    <p class="text-gray-700">{{ event.description }}</p>
+                </div>
+                {% endif %}
+
+                {% if event.series %}
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase">Part of</h2>
+                    <p class="text-lg">
+                        <a href="{% url 'web:series_detail' event.series.slug %}" class="text-blue-600 hover:underline">
+                            {{ event.series.name }}
+                        </a>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if event.poster %}
+            <div>
+                <img src="{{ event.poster.url }}" alt="{{ event.title }} poster" class="w-full rounded-lg shadow">
+                <p class="text-xs text-gray-500 mt-2">
+                    Poster shown for publicity. <a href="mailto:takedown@example.com" class="underline">Request removal</a>.
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <footer class="border-t pt-4 text-sm text-gray-600">
+            <p>Source: {{ event.venue.source_url|default:"community submission" }}</p>
+        </footer>
+    </article>
+</div>
+{% endblock %}

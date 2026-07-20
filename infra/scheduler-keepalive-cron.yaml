@@ -1,0 +1,11 @@
+# Cloud Scheduler: keepalive ping for Supabase free-tier inactivity pause
+# gcloud scheduler jobs create http supabase-keepalive \
+#   --location=asia-south1 \
+#   --schedule="0 */6 * * *" \
+#   --uri="https://bengaluruclassical.in/health/" \
+#   --http-method=GET
+
+name: supabase-keepalive
+schedule: "0 */6 * * *"
+timeZone: Asia/Kolkata
+description: Ping /health/ every 6 hours to keep Supabase awake

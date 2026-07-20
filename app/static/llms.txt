@@ -1,0 +1,22 @@
+# Bengaluru Classical — AI Discovery
+
+This site aggregates hardcore Karnatic and Hindustani classical concerts in Bengaluru.
+
+## Read-only MCP server
+Endpoint: /mcp (stateless streamable HTTP)
+Tools: search_events, get_event, list_venues, list_artists
+Discovery: /.well-known/mcp.json
+
+## Key URLs
+- Upcoming events: /
+- Event detail: /events/<slug>/
+- Calendar ICS feed: /calendar.ics
+- Archive: /archive/
+- Series: /festivals/<slug>/
+
+## Coverage
+Genre: Karnatic (Carnatic) and Hindustani classical only (no film/fusion/pop)
+City: Bengaluru, Karnataka, India
+
+## Contact
+Takedown/corrections: contact@example.com

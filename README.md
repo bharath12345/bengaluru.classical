@@ -11,8 +11,9 @@ site — with a permanent archive of the city's classical concert history.
 
 ## Status
 
-Planning complete — full implementation plan written across six phases, awaiting
-review before any code is written.
+Implementation complete on branch `implement/plans-1-6` (Plans 1–6).
+Live GCP provisioning (billing, Cloud Run deploy, domain) is documented in
+[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) and awaits maintainer credentials.
 
 ### Specifications
 - [`docs/problem.md`](docs/problem.md) — the problem and data-sourcing challenges.

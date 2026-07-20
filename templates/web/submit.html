@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Submit an Event — Bengaluru Classical{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+<h1 class="text-4xl font-bold mb-4">Submit an Event</h1>
+{% if success %}
+<p class="text-green-700 font-semibold mb-4">Thank you! Your submission has been received and will be reviewed shortly.</p>
+{% else %}
+<p class="text-gray-700 mb-6">Help us keep the community informed — submit an upcoming Karnatic or Hindustani classical concert. You can upload a poster image and/or fill in the details below.</p>
+
+<form method="post" enctype="multipart/form-data" class="bg-white rounded-lg shadow p-6 space-y-4">
+  {% csrf_token %}
+  {{ form.honeypot }}
+
+  {% if form.non_field_errors %}
+  <div class="text-red-600">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  {% for field in form %}
+    {% if field.name != 'honeypot' %}
+    <p>
+      <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<small class="text-gray-500">{{ field.help_text }}</small>{% endif %}
+      {% if field.errors %}<div class="text-red-600 text-sm">{{ field.errors }}</div>{% endif %}
+    </p>
+    {% endif %}
+  {% endfor %}
+
+  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Submit</button>
+</form>
+{% endif %}
+</div>
+{% endblock %}
