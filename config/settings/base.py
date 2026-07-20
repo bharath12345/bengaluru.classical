@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.events",
     "apps.sources",
+    "apps.ingest",
 ]
 
 MIDDLEWARE = [
