@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Archive — Bengaluru Classical{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <h1 class="text-4xl font-bold mb-6">Past Concerts</h1>
+
+    <div class="space-y-6">
+        {% for event in events %}
+        {% include "web/partials/event_card.html" with event=event %}
+        {% empty %}
+        <p class="text-gray-600 text-center py-8">No past events yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

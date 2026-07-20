@@ -36,3 +36,60 @@ uv run python manage.py makemigrations --check --dry-run   # CI gate
 ## Account separation (hard rule)
 All GCP/Supabase/API usage and git authorship use the personal identity
 `bharath12345@gmail.com`. The employer identity is never used here.
+
+## Tailwind CSS build
+
+The project uses Tailwind CSS v4 standalone CLI (see `docs/TAILWIND.md` for installation).
+
+Development (watch mode):
+```bash
+tailwindcss -i app/static/src/main.css -o app/static/dist/main.css --watch
+```
+
+Production (minified):
+```bash
+tailwindcss -i app/static/src/main.css -o app/static/dist/main.css --minify
+```
+
+## Running the public site
+
+1. Build Tailwind (in one terminal):
+```bash
+tailwindcss -i app/static/src/main.css -o app/static/dist/main.css --watch
+```
+
+2. Run Django dev server (in another terminal):
+```bash
+docker compose up -d db
+uv run python manage.py runserver
+```
+
+3. Visit:
+- Public site: http://localhost:8000/
+- Django admin: http://localhost:8000/admin/
+- ICS feed: http://localhost:8000/calendar.ics
+- Sitemap: http://localhost:8000/sitemap.xml
+
+## Seeding test data
+
+To see the public site with sample events, create some published events via the admin or shell:
+
+```python
+from apps.core.factories import CityFactory, VenueFactory, ArtistFactory
+from apps.events.factories import EventFactory, EventArtistFactory
+from apps.events.models import Event
+from django.utils import timezone
+from datetime import timedelta
+
+city = CityFactory(name="Bengaluru", slug="bengaluru")
+venue = VenueFactory(city=city)
+event = EventFactory(
+    status=Event.Status.PUBLISHED,
+    start_at=timezone.now() + timedelta(days=3),
+    venue=venue,
+    city=city,
+    slug="sample-concert",
+)
+artist = ArtistFactory()
+EventArtistFactory(event=event, artist=artist, role="vocal")
+```

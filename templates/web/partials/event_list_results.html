@@ -1,0 +1,7 @@
+<div id="event-results" class="space-y-6">
+    {% for event in events %}
+        {% include "web/partials/event_card.html" with event=event %}
+    {% empty %}
+        <p class="text-gray-600 text-center py-8">No upcoming events match your filters.</p>
+    {% endfor %}
+</div>
