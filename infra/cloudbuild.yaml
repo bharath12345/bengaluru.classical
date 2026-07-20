@@ -1,0 +1,46 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - infra/Dockerfile
+      - -t
+      - asia-south1-docker.pkg.dev/$PROJECT_ID/bengaluru-classical/web:$COMMIT_SHA
+      - -t
+      - asia-south1-docker.pkg.dev/$PROJECT_ID/bengaluru-classical/web:latest
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - asia-south1-docker.pkg.dev/$PROJECT_ID/bengaluru-classical/web:$COMMIT_SHA
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - asia-south1-docker.pkg.dev/$PROJECT_ID/bengaluru-classical/web:latest
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - bengaluru-classical-web
+      - --image=asia-south1-docker.pkg.dev/$PROJECT_ID/bengaluru-classical/web:$COMMIT_SHA
+      - --region=asia-south1
+      - --platform=managed
+      - --allow-unauthenticated
+      - --port=8080
+      - --memory=512Mi
+      - --cpu=1
+      - --min-instances=0
+      - --max-instances=3
+      - --set-env-vars=DJANGO_SETTINGS_MODULE=config.settings.prod
+      - --set-secrets=DJANGO_SECRET_KEY=DJANGO_SECRET_KEY:latest,DATABASE_URL=DATABASE_URL:latest,GEMINI_API_KEY=GEMINI_API_KEY:latest,INBOUND_EMAIL_SECRET=INBOUND_EMAIL_SECRET:latest
+
+images:
+  - asia-south1-docker.pkg.dev/$PROJECT_ID/bengaluru-classical/web:$COMMIT_SHA
+  - asia-south1-docker.pkg.dev/$PROJECT_ID/bengaluru-classical/web:latest
+
+options:
+  logging: CLOUD_LOGGING_ONLY

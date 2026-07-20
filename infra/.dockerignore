@@ -1,0 +1,17 @@
+.git
+.gitignore
+.env
+.env.*
+*.pyc
+__pycache__/
+*.log
+.DS_Store
+.vscode
+.idea
+.pytest_cache
+.ruff_cache
+staticfiles/
+media/
+mediafiles/
+docker-compose.yml
+.venv/

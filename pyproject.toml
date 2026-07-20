@@ -18,6 +18,11 @@ dependencies = [
     "google-genai>=0.8",
     "fastmcp>=2.0",
     "starlette>=0.37",
+    "whitenoise>=6.7",
+    "gunicorn>=23.0",
+    "uvicorn[standard]>=0.30",
+    "structlog>=24.4",
+    "google-cloud-logging>=3.11",
 ]
 
 [dependency-groups]
