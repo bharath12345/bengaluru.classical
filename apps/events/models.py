@@ -4,6 +4,31 @@ from django.utils import timezone
 from apps.core.models import Artist, City, Series, TimeStampedModel, Venue
 
 
+class EventQuerySet(models.QuerySet):
+    def published(self):
+        return self.filter(status=Event.Status.PUBLISHED)
+
+    def upcoming(self):
+        return self.published().filter(start_at__gte=timezone.now()).order_by("start_at")
+
+    def past(self):
+        return self.published().filter(start_at__lt=timezone.now()).order_by("-start_at")
+
+
+class EventManager(models.Manager):
+    def get_queryset(self):
+        return EventQuerySet(self.model, using=self._db)
+
+    def published(self):
+        return self.get_queryset().published()
+
+    def upcoming(self):
+        return self.get_queryset().upcoming()
+
+    def past(self):
+        return self.get_queryset().past()
+
+
 class Event(TimeStampedModel):
     class Genre(models.TextChoices):
         KARNATIC = "karnatic", "Karnatic"
@@ -35,6 +60,8 @@ class Event(TimeStampedModel):
     )
     dedup_key = models.CharField(max_length=200, blank=True, db_index=True)
     artists = models.ManyToManyField(Artist, through="EventArtist", related_name="events")
+
+    objects = EventManager()
 
     class Meta:
         ordering = ["start_at"]
