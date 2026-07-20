@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "apps.sources",
     "apps.ingest",
     "apps.web",
+    "apps.pipeline",
 ]
 
 MIDDLEWARE = [
@@ -86,5 +87,8 @@ RAW_STORAGE_GCS_BUCKET = os.environ.get("RAW_STORAGE_GCS_BUCKET", "")
 SUBMISSION_INBOX = os.environ.get("SUBMISSION_INBOX", "")
 INBOUND_EMAIL_SECRET = os.environ.get("INBOUND_EMAIL_SECRET", "dev-insecure-secret")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "noreply@bengaluruclassical.in")
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash-lite")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
