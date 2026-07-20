@@ -13,4 +13,5 @@ urlpatterns = [
     path("calendar.ics", feeds.ics_feed, name="ics_feed"),
     path("archive/", views.archive_view, name="archive"),
     path("festivals/<slug:slug>/", views.series_detail, name="series_detail"),
+    path("submit/", views.submit_form, name="submit"),
 ]

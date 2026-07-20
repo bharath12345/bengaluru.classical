@@ -77,4 +77,14 @@ STATICFILES_DIRS = [
     BASE_DIR / "app" / "static",
 ]
 
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "mediafiles"
+
+RAW_STORAGE_BACKEND = os.environ.get("RAW_STORAGE_BACKEND", "local")
+RAW_STORAGE_GCS_BUCKET = os.environ.get("RAW_STORAGE_GCS_BUCKET", "")
+
+SUBMISSION_INBOX = os.environ.get("SUBMISSION_INBOX", "")
+INBOUND_EMAIL_SECRET = os.environ.get("INBOUND_EMAIL_SECRET", "dev-insecure-secret")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "noreply@bengaluruclassical.in")
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

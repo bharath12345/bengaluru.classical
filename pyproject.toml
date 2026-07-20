@@ -9,6 +9,8 @@ dependencies = [
     "dj-database-url>=2.2",
     "pillow>=10.4",
     "icalendar>=6.1",
+    "google-cloud-storage>=2.18",
+    "pytest-mock>=3.14",
 ]
 
 [dependency-groups]

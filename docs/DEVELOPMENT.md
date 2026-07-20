@@ -93,3 +93,19 @@ event = EventFactory(
 artist = ArtistFactory()
 EventArtistFactory(event=event, artist=artist, role="vocal")
 ```
+
+## Public Submission & Inbound Email (Plan 3)
+
+### Public submission form
+- URL: `http://localhost:8000/submit/`
+- Honeypot spam protection + IP rate limiting (3/hour)
+- On submit: creates `RawIngest` + `Submission`, sends notification to `SUBMISSION_INBOX` (console backend in dev)
+
+### Inbound email receiver
+- Endpoint: `POST /ingest/email/` (authenticated by shared secret)
+- Accepts raw MIME + attachments from Cloudflare Email Worker
+- Deploy the worker: see `infra/cloudflare/README.md`
+
+### Storage backends
+- **Dev/test:** local filesystem (`mediafiles/raw/`)
+- **Prod:** GCS (`RAW_STORAGE_GCS_BUCKET`)

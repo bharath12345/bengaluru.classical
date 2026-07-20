@@ -1,11 +1,20 @@
 import json
 from itertools import groupby
 
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.conf import settings
+from django.core.mail import send_mail
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.views.decorators.http import require_http_methods
 
 from apps.core.models import Series
 from apps.events.models import Event
+from apps.ingest.forms import SubmissionForm
+from apps.ingest.models import RawIngest, Submission
+from apps.ingest.rate_limit import check_rate_limit
+from apps.ingest.storage import get_storage
+from apps.sources.models import Source
 
 
 def health(request):
@@ -113,3 +122,85 @@ def series_detail(request, slug):
     series = get_object_or_404(Series, slug=slug)
     events = Event.objects.published().filter(series=series).order_by("-start_at")
     return render(request, "web/series_detail.html", {"series": series, "events": events})
+
+
+@require_http_methods(["GET", "POST"])
+def submit_form(request):
+    if request.method == "POST":
+        if not check_rate_limit(request):
+            return HttpResponse("Too many requests. Please try again later.", status=429)
+
+        form = SubmissionForm(request.POST, request.FILES)
+        if form.is_valid():
+            form_source, _ = Source.objects.get_or_create(
+                name="Public submission form", defaults={"type": Source.Type.FORM}
+            )
+
+            poster_blob_ref = None
+            if form.cleaned_data.get("poster"):
+                storage = get_storage()
+                poster_file = form.cleaned_data["poster"]
+                poster_content = poster_file.read()
+                poster_blob_ref = storage.save(
+                    poster_file.name,
+                    poster_content,
+                    poster_file.content_type or "image/jpeg",
+                )
+
+            submission_data = {
+                "title": form.cleaned_data.get("title"),
+                "genre": form.cleaned_data.get("genre"),
+                "event_date": (
+                    str(form.cleaned_data.get("event_date"))
+                    if form.cleaned_data.get("event_date")
+                    else None
+                ),
+                "event_time": (
+                    str(form.cleaned_data.get("event_time"))
+                    if form.cleaned_data.get("event_time")
+                    else None
+                ),
+                "venue_text": form.cleaned_data.get("venue_text"),
+                "artists_text": form.cleaned_data.get("artists_text"),
+                "ticket_url": form.cleaned_data.get("ticket_url"),
+                "description": form.cleaned_data.get("description"),
+                "poster_blob_ref": poster_blob_ref,
+            }
+            submission_json = json.dumps(submission_data, indent=2).encode("utf-8")
+            storage = get_storage()
+            data_blob_ref = storage.save("submission.json", submission_json, "application/json")
+
+            raw_ingest = RawIngest.objects.create(
+                source=form_source,
+                blob_ref=data_blob_ref,
+                content_type="application/json",
+                fetched_at=timezone.now(),
+            )
+
+            submission = Submission.objects.create(
+                raw_ingest=raw_ingest,
+                submitter_contact=form.cleaned_data.get("submitter_contact", ""),
+            )
+
+            if settings.SUBMISSION_INBOX:
+                send_mail(
+                    subject="New submission via web form",
+                    message=(
+                        f"Submission #{submission.pk}\n"
+                        f"Contact: {submission.submitter_contact or 'none'}\n"
+                        f"Title: {submission_data['title'] or 'N/A'}\n"
+                        f"Poster: {poster_blob_ref or 'N/A'}"
+                    ),
+                    from_email=getattr(
+                        settings, "DEFAULT_FROM_EMAIL", "noreply@bengaluruclassical.in"
+                    ),
+                    recipient_list=[settings.SUBMISSION_INBOX],
+                    fail_silently=True,
+                )
+
+            return redirect(f"{request.path}?success=1")
+    else:
+        form = SubmissionForm()
+
+    success = request.GET.get("success") == "1"
+    return render(request, "web/submit.html", {"form": form, "success": success})
