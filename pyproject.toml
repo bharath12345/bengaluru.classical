@@ -1,0 +1,31 @@
+[project]
+name = "bengaluru-classical"
+version = "0.1.0"
+description = "Aggregator for hardcore Karnatic and Hindustani classical concerts in Bengaluru"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.1,<6.0",
+    "psycopg[binary]>=3.2",
+    "dj-database-url>=2.2",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6",
+    "pytest>=8.3",
+    "pytest-django>=4.9",
+    "factory-boy>=3.3",
+    "django-extensions>=3.2",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "DJ"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py"]
+addopts = "-ra"
