@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -44,9 +43,7 @@ class Migration(migrations.Migration):
                 ("is_free", models.BooleanField(default=True)),
                 (
                     "price",
-                    models.DecimalField(
-                        blank=True, decimal_places=2, max_digits=8, null=True
-                    ),
+                    models.DecimalField(blank=True, decimal_places=2, max_digits=8, null=True),
                 ),
                 ("currency", models.CharField(default="INR", max_length=3)),
                 ("source_url", models.URLField(blank=True)),
@@ -147,14 +144,10 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="event",
-            index=models.Index(
-                fields=["status", "start_at"], name="events_even_status_76ecd8_idx"
-            ),
+            index=models.Index(fields=["status", "start_at"], name="events_even_status_76ecd8_idx"),
         ),
         migrations.AddIndex(
             model_name="event",
-            index=models.Index(
-                fields=["genre", "start_at"], name="events_even_genre_378829_idx"
-            ),
+            index=models.Index(fields=["genre", "start_at"], name="events_even_genre_378829_idx"),
         ),
     ]

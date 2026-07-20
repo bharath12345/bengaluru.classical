@@ -28,9 +28,7 @@ class Source(TimeStampedModel):
     city = models.ForeignKey(
         City, on_delete=models.PROTECT, null=True, blank=True, related_name="sources"
     )
-    health_status = models.CharField(
-        max_length=20, choices=Health.choices, default=Health.UNKNOWN
-    )
+    health_status = models.CharField(max_length=20, choices=Health.choices, default=Health.UNKNOWN)
     last_seen_at = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True)
     seasonal = models.BooleanField(default=False)
