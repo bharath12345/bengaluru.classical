@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: blr
+          POSTGRES_PASSWORD: blr
+          POSTGRES_DB: blr_classical
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U blr -d blr_classical"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DJANGO_SETTINGS_MODULE: config.settings.test
+      DATABASE_URL: postgres://blr:blr@localhost:5432/blr_classical
+      DJANGO_SECRET_KEY: test-secret-for-ci
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Detect Python project
+        id: project
+        run: |
+          if [ -f pyproject.toml ] && [ -f manage.py ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "Python/Django project not on this ref yet; skipping lint and tests."
+          fi
+
+      - name: Install uv
+        if: steps.project.outputs.present == 'true'
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        if: steps.project.outputs.present == 'true'
+        run: uv python install
+
+      - name: Install dependencies
+        if: steps.project.outputs.present == 'true'
+        run: uv sync --frozen --group dev
+
+      - name: Ruff check
+        if: steps.project.outputs.present == 'true'
+        run: uv run ruff check .
+
+      - name: Ruff format
+        if: steps.project.outputs.present == 'true'
+        run: uv run ruff format --check .
+
+      - name: Pytest
+        if: steps.project.outputs.present == 'true'
+        run: uv run pytest
+
+      - name: Migration check
+        if: steps.project.outputs.present == 'true'
+        run: uv run python manage.py makemigrations --check --dry-run
